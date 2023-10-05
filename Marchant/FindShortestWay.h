@@ -14,5 +14,7 @@ public:
 private:
 	City* start;
 	City* target;
+
+	std::vector<Road> findLightWay(std::vector<std::vector<int>> listWaights);
 };
 

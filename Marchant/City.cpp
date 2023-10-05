@@ -1,6 +1,7 @@
 #include "City.h"
 
-City::City(char namep)
+City::City(int idp, char namep)
 {
+	id = idp;
 	name = namep ;
 }

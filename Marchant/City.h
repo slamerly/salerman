@@ -3,12 +3,13 @@
 class City
 {
 public:
-	City(char namep);
+	City(int idp, char namep);
 
 	char getname() { return name; }
+	int getId() { return id; }
 
 private:
 	char name;
-
+	int id;
 };
 
