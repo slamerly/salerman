@@ -5,8 +5,8 @@ class City
 public:
 	City(int idp, char namep);
 
-	char getname() { return name; }
 	int getId() { return id; }
+	char getname() { return name; }
 
 private:
 	char name;

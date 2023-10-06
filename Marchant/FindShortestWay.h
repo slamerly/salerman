@@ -7,14 +7,13 @@
 class FindShortestWay
 {
 public:
-	FindShortestWay(City* startp, City* targetp);
+	FindShortestWay(City* startp);
 
-	std::vector<Road> findWay(std::vector<City>& listOfCities, std::vector<Road>& listOfRoads);
+	std::vector<City> findWay(std::vector<City>& listOfCities, std::vector<Road>& listOfRoads);
+	int getWeightWay() { return weightWay; }
 
 private:
 	City* start;
-	City* target;
-
-	std::vector<Road> findLightWay(std::vector<std::vector<int>> listWaights);
+	int weightWay{ INT_MAX };
 };
 

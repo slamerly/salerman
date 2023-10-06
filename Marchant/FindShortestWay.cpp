@@ -1,67 +1,97 @@
 #include "FindShortestWay.h"
+#include <algorithm>
 
-FindShortestWay::FindShortestWay(City* startp, City* targetp)
+FindShortestWay::FindShortestWay(City* startp)
 {
 	start = startp;
-	target = targetp;
 }
 
-std::vector<Road> FindShortestWay::findWay(std::vector<City>& listOfCities, std::vector<Road>& listOfRoads)
+/*
+Find the shortest way through all the cities and back to the starting city
+@param listOfCities: list of all cities
+@param listOfRoads: list of all roads
+@return result: return the shortest way in the order of cities crossed
+*/
+std::vector<City> FindShortestWay::findWay(std::vector<City>& listOfCities, std::vector<Road>& listOfRoads)
 {
-	std::vector<City>citiesSee{ listOfCities };
-	std::vector<Road>roadsCurrentCity;
+	std::vector<City> result;
 
-	std::vector<std::vector<int>> weightOfAllRoadPossible (listOfCities.size());
-
-	//City* currentCity = start;
-	int currentW = 0;
-
-	
-	std::vector<City> nextCities;
-	std::vector<City> order;
-	nextCities.push_back(*start);
-	order.push_back(*start);
-
-	while (!nextCities.empty())
+	std::vector<int> vertex;
+	for (int i = 0; i < listOfCities.size(); i++)
 	{
-		std::vector<int> currentRoads(listOfCities.size());
-		for (auto road : listOfRoads)
+		if (i != start->getId())
 		{
-			if (road.getCityA()->getId() == nextCities[0].getId() || road.getCityB()->getId() == nextCities[0].getId())
-			{
-				if (road.getCityA()->getId() != nextCities[0].getId())
-				{
-					auto exist = find(nextCities.begin(), nextCities.end(), road.getCityA());
-					if (exist == nextCities.end())
-					{
-						nextCities.push_back(*road.getCityA());
-					}
-					currentRoads[road.getCityA()->getId()] = currentW + road.getWeight();
-				}
-				else if (road.getCityB()->getId() != nextCities[0].getId())
-				{
-					auto exist = find(nextCities.begin(), nextCities.end(), road.getCityB());
-					if (exist == nextCities.end())
-					{
-						nextCities.push_back(*road.getCityB());
-					}
-					currentRoads[road.getCityB()->getId()] = currentW + road.getWeight();
-				}
-			}
+			vertex.push_back(i);
 		}
-		weightOfAllRoadPossible[nextCities[0].getId()] = currentRoads;
-		nextCities.erase(nextCities.begin());
 	}
 
+	do {
+		// store current path weight
+		int currentWeight = 0;
 
+		// current city
+		int currentCity = start->getId();
 
+		// current path
+		std::vector<City> currentPath;
+		currentPath.push_back(*start);
 
-	return std::vector<Road>();
-}
+		// number of city crossed
+		int countCityCrossed = 0;
 
-std::vector<Road> FindShortestWay::findLightWay(std::vector<std::vector<int>> listWaights)
-{
+		for (int i = 0; i < vertex.size(); i++) 
+		{
+			int saveCW = currentWeight;
+			for (auto road : listOfRoads)
+			{
+				// find a way with currentCity and listOfCities[vertex[i]]
+				if ((road.getCityA()->getId() == currentCity && road.getCityB()->getId() == listOfCities[vertex[i]].getId())
+					|| (road.getCityA()->getId() == listOfCities[vertex[i]].getId() && road.getCityB()->getId() == currentCity))
+				{
+					countCityCrossed++;
+					currentWeight += road.getWeight();
 
+					// add the currentCity in the currentPath
+					if (road.getCityA()->getId() == currentCity)
+					{
+						currentPath.push_back(*road.getCityB());
+					}
+					else
+					{
+						currentPath.push_back(*road.getCityA());
+					}
+				}
+			}
+			// pass to the next city
+			currentCity = vertex[i];
+		}
 
-	return std::vector<Road>();
+		// if exist add the road to back to the starting city
+		for (auto road : listOfRoads)
+		{
+			if ((road.getCityA()->getId() == currentCity && road.getCityB()->getId() == start->getId())
+				|| (road.getCityA()->getId() == start->getId() && road.getCityB()->getId() == currentCity))
+			{
+				currentWeight += road.getWeight();
+				countCityCrossed++;
+				currentPath.push_back(*start);
+			}
+		}
+
+		// update minimum
+		if (countCityCrossed >= listOfCities.size())
+		{
+			int newMin = std::min(weightWay, currentWeight);
+
+			if (weightWay != newMin)
+			{
+				weightWay = newMin;
+				result.clear();
+				result = currentPath;
+			}
+		}
+
+	} while (std::next_permutation(vertex.begin(), vertex.end()));
+
+	return result;
 }

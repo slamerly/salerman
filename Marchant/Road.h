@@ -6,9 +6,10 @@ class Road
 {
 public:
 	Road(City* cityAp, City* cityBp, int weightp);
+
 	City* getCityA() { return cityA; }
 	City* getCityB() { return cityB; }
-	int getWeight() { return; }
+	int getWeight() { return weight; }
 
 private:
 	City* cityA;
